@@ -1,0 +1,244 @@
+﻿@using DOL.MVC.Helpers
+@model IEnumerable<DOL.MVC.Models.TimesheetDetailsModels>
+@{
+    ViewBag.Title = "TimehSheet Daily Time Record";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+
+
+@Styles.Render("~/Content/plugins")
+
+
+
+<style>
+.hourWidth input {
+    width: 60px;
+}
+
+.loadinggif {
+    background:url('http://www.hsi.com.hk/HSI-Net/pages/images/en/share/ajax-loader.gif') no-repeat right center;
+}
+
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var SortCenter_FromController = set(@Html.Raw(Json.Encode(ViewBag.SortCenter)));
+        var DateFrom_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateFrom)));
+        var DateTo_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateTo)));
+
+        var _dateFrom = new Date(DateFrom_Controller);
+        var _dateTo = new Date(DateTo_Controller);
+
+
+     //   alert('SortCenter: ' + SortCenter_FromController +  + ' _dateFrom : ' + _dateFrom + '\r' + '_dateTo : ' + _dateTo);
+
+        if (DateFrom_Controller == '') // No Date : Initial Value when clicking the page
+        {
+            $("#orderStartDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", "0");
+            $("#orderFinishDate").datepicker({ dateFormat: 'dd/mm/yy', }).datepicker("setDate", new Date().getDay + 7);
+        }
+        else
+        {
+            $('#SortCenter').val(SortCenter_FromController).attr("selected", "selected");
+
+            $("#orderStartDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", DateFrom_Controller);
+            $("#orderFinishDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", DateTo_Controller);
+
+        }
+
+
+
+
+    });
+
+    function set(value) {
+        return value;
+    }
+
+
+</script>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="http://msurguy.github.io/ladda-bootstrap/dist/ladda-themeless.min.css">
+<script src="http://msurguy.github.io/ladda-bootstrap/dist/spin.min.js"></script>
+<script src="http://msurguy.github.io/ladda-bootstrap/dist/ladda.min.js"></script>
+
+<div>
+    <span style="color:red;">NOTE: ENTER ALL TIMES IN 24 HOUR CLOCK FORMAT ie 5:00PM is entered as 17:00</span>
+   <br />
+    Timesheet Number : <span style="font-size:medium"> @ViewBag.TimeSheetNumber</span>         
+</div>
+
+
+@*<div class="col-md-6" id="daterange">
+    @using (Html.BeginForm("TimesheetClientDetails", "TimeSheet", FormMethod.Post))
+    {
+        <p>
+       
+        </p>
+
+
+    }
+</div>*@
+
+@using (Html.BeginForm("UpdateTimesheetClientDetails", "TimeSheet", FormMethod.Post, new { @class = "m-t-md", role = "form" }))
+{
+
+   
+
+<div id="main-wrapper">
+
+    <div id="main-wrapper">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-white">
+                        <div class="panel-body">
+                            <div class="box-body table-responsive">
+
+                                <table id="timeSheetDetails" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr style="background-color :#34425A;color:white;text-align:center;">
+
+                                            <th>Date</th>
+                                            <th>Day</th>
+                                            <th style="text-align:center;">Clock In</th>
+                                            <th style="text-align:center;">Clock Out</th>
+                                            <th style="text-align:center;">Shift Start</th>
+                                            <th style="text-align:center;">Break start</th>
+                                            <th style="text-align:center;">Break Stop</th>
+                                            <th style="text-align:center;">Shift End</th>
+                                            <th>Total Hours</th>
+                                            <th>Cost Centre </th>
+                                            <th>Leave Reason</th>
+
+
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model)
+                                        {
+
+                                            <tr>
+                                                
+                                                @Html.HiddenFor(m => item.Timesheet_Serial_Number)
+                                                <td nowrap style="text-align:center;font-size:medium;color:grey;">@Html.DisplayFor(model => item.Shift_date)<br />      </td>
+                                                @Html.HiddenFor(m => item.Shift_date)
+
+                                                <td nowrap style="text-align:center;font-size:medium;color:grey;">@String.Format("{0:ddd}", item.Shift_date)</td>
+
+
+                                                <td>@String.Format("{0:t}",  item.Actual_start_time)</td>
+                                                <td>@String.Format("{0:t}", item.Actual_end_time)</td>
+
+                                                <td>
+                                                
+                                                        <div class="hourWidth">
+
+                                                            @Html.EditorFor(m => item.Actual_start_time)
+                                                           
+                                                        </div>
+                                                </td>
+                                                <td>
+                                                    <div class="hourWidth">
+                                                        @Html.EditorFor(m => item.Actual_break_start)
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="hourWidth">
+                                                        @Html.EditorFor(m => item.Actual_break_end)
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="hourWidth">
+                                                        @Html.EditorFor(m => item.Actual_end_time)
+                                                    </div>
+                                                </td>
+
+                                                @*<td style="font-weight:700;color:darkgreen;"><span id=" item.Total_Hours"> @String.Format("{0:0.##}", item.Total_Hours)</span></td>*@
+                                                <td style="font-weight:700;color:darkgreen;">@Html.DisplayFor(model => item.Total_Hours)</td>
+                                                @Html.HiddenFor(m => item.Total_Hours)
+
+
+                                                <td></td>
+                                                @*<td>@Html.DropDownListFor(m => item.leave_reason, (SelectList)ViewBag.DropdownResult)</td>*@
+
+                                                <td>@Html.DropDownList("item.SelectedReason", new SelectList((System.Collections.IEnumerable)ViewData["tempEmpList"], "lookup_id", "lookup_value", item.leave_reason), "-- Select --")</td>
+
+
+                                            </tr>
+
+                                        }
+
+
+                                        <tr>
+                                            <td colspan="7">
+
+                                                Supervisor Notes :<br />
+                                                @*@Html.TextAreaFor(model => model., 10, 120, htmlAttributes: new { style = "width: 100%; max-width: 100%;" })*@
+
+                                                @Html.TextArea("item.txtSupComment", (string)ViewBag.CommentSupervisor, new { style = "width: 100%; max-width: 100%;" })
+                                            </td>
+                                            <td style="font-weight:bold;">
+                                                Total:
+                                            </td>
+                                            <td style="font-weight:800;color:darkgreen;font-size:medium;">
+                                                @ViewBag.TotalHours
+                                                <input type="hidden" value="@ViewBag.TotalHours" id="hdnGrandTotalHours" />
+
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        @*<tr>
+
+                                            <td>
+                                                <input type="submit" value="Save Timesheet" class="" />
+                                            </td>
+
+                                        </tr>*@
+                                    </tbody>
+                                </table>
+
+                                <div style="text-align:center;">
+                                
+
+                                    <button id='inputsource' class="btn btn-success"  onclick="$('#inputsource').addClass('loadinggif');">Save Timesheet</button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div id="WaitDialog" class="hidden" style="text-align: center">
+        <img src="~/images/loading_black.gif" />
+        <div style="margin-top: 10px; color: white">
+            <b>Please wait</b>
+        </div>
+    </div>
+
+ }
+
+@section scripts {
+<script type="text/javascript">
+
+
+    $('input:submit').click(function () {
+        $('p').text("Form submiting.....").addClass('submit');
+        $('input:submit').attr("disabled", true);
+    });
+
+   </script>
+}

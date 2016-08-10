@@ -1,0 +1,80 @@
+﻿@model DOL.MVC.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "OI Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Drake International</title>
+    
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta charset="UTF-8">
+    <meta name="description" content="Drake" />
+    <meta name="keywords" content="Drake" />
+    <meta name="author" content="Drake" />
+
+    @Styles.Render("~/Content/plugins")
+    @Styles.Render("~/Content/theme")    
+</head>
+<body class="page-login">
+    <main class="page-content">
+        <div class="page-inner">
+            <div id="main-wrapper">
+                <div class="row">
+                    <div class="col-md-3 center">
+                        <div class="login-box">
+                            @*<div style="align-content:center;"><img src="/images/oilogo.png" alt="Owens-Illinois."></div>*@ 
+                            @*<a href="index.html" class="logo-name text-lg text-center">Owens-Illinois Login</a>*@
+                            <table border="0" style="width:465px; height:310px">
+                                <tr>
+                                    <td background="/images/loginForm.png">
+                                        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "m-t-md", role = "form" }))
+                                        {
+                                          
+                                            <div class="form-group" align="center">
+                                                <br /><br /><br />
+
+                                                <div style="text-align :center; width :70%">
+                                                    <i class="icon-user"></i>
+                                                    <input type="text"
+                                                           class="form-control input-group-lg"
+                                                           placeholder="Username" name="Username" required />
+                                                </div>
+
+                                                @*<div style="text-align :center; width :70%">
+                                                       <input type="text" class="form-control input-lg" placeholder="type your user id" name="Username" required>
+                                                </div>*@
+                                            </div>
+                                                    <div class="form-group" align="center">
+                                                        <div style="text-align :center; width :70%">
+                                                            <i class="icon-key"></i>
+                                                            <input type="password"
+                                                                   class="form-control input-group-lg"
+                                                                   placeholder="Password" name="Password" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group" align="center">
+                                                        <div align="center" style="width :70%"><button type="submit" class="btn btn-success btn-block btn-group-lg">Login</button></div>
+                                                    </div>
+        <p class="text-center m-t-xs text-sm">Copyright &copy; @DateTime.Now.Year Drake International<br />All rights reserved.</p>
+        }
+</td>
+                                </tr>
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true)
+                            </table>   
+                        </div>
+                    </div>
+                </div><!-- Row -->
+            </div><!-- Main Wrapper -->
+        </div><!-- Page Inner -->
+    </main><!-- Page Content -->
+    @Scripts.Render("~/bundles/scripts")    
+    
+</body>
+</html>

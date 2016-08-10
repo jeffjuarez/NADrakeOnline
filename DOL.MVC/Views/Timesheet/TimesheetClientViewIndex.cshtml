@@ -1,0 +1,309 @@
+﻿@model IEnumerable<DOL.MVC.Models.TimesheetViewModels>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+
+<style type="text/css">
+       
+    .login-dialog .modal-dialog {
+    width: 1500px;
+}
+
+
+</style>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var SortCenter_FromController = set(@Html.Raw(Json.Encode(ViewBag.SortCenter)));
+        var DateFrom_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateFrom)));
+        var DateTo_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateTo)));
+
+        var _dateFrom = new Date(DateFrom_Controller);
+        var _dateTo = new Date(DateTo_Controller);
+
+
+     //   alert('SortCenter: ' + SortCenter_FromController +  + ' _dateFrom : ' + _dateFrom + '\r' + '_dateTo : ' + _dateTo);
+
+        if (DateFrom_Controller == '') // No Date : Initial Value when clicking the page
+        {
+            $("#orderStartDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", "0");
+            $("#orderFinishDate").datepicker({ dateFormat: 'dd/mm/yy', }).datepicker("setDate", new Date().getDay + 7);
+        }
+        else
+        {
+            $('#SortCenter').val(SortCenter_FromController).attr("selected", "selected");
+
+            $("#orderStartDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", DateFrom_Controller);
+            $("#orderFinishDate").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker("setDate", DateTo_Controller);
+
+        }
+
+
+
+
+    });
+
+    function set(value) {
+        return value;
+    }
+
+
+</script>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+<div class="page-title">
+    <h3>Timesheet</h3>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="active">Weekly Tracking for the Period  @ViewBag.Periods</li>
+        </ol>
+    </div>
+</div>
+
+<div>
+    @using (Html.BeginForm("Search_TimeSheet", "TimeSheet", FormMethod.Post))
+    {
+        <p>
+
+            <table>
+                <tr>
+                    <td style="white-space:nowrap;">Order Start Date :</td>
+                    <td>
+                        @Html.TextBox("orderStartDate", "", new { style = "width:125px;height:25px", @class = "datepicker" })
+
+                    </td>
+                    <td style="white-space:nowrap;">To :</td>
+                    <td> @Html.TextBox("orderFinishDate", "", new { style = "width:125px;height:25px", @class = "datepicker" })</td>
+                    <td><input type="submit" value="Search" /></td>
+                   
+
+                    <td width="450px">
+
+                    </td>
+                    <td nowrap>
+                        Timesheet # :
+                    </td>
+                    <td>
+                        @Html.TextBox("TimeSheetNo", "", new { style = "width:125px;height:25px"})
+                    </td>
+                    <td><input type="submit" value="Find" /></td>
+                 
+
+                </tr>
+               
+
+            </table>
+          <br />
+            <table>
+                <tr>
+                    <td nowrap>
+                        Filter Client :
+                    </td>
+                    <td>@Html.DropDownList("ClientSelected", new SelectList((System.Collections.IEnumerable)ViewData["tempClientList"], "group_id", "client_org_name",ViewBag.SelectedClient), "-- All --", new { style = "width:325px;height:25px", onchange = "this.form.submit();" })</td>
+                    <td nowrap>
+                        Others :
+                    </td>
+                    <td>@Html.DropDownList("OthersSelected", new SelectList((System.Collections.IEnumerable)ViewData["tempOtherList"], "group_id", "client_org_name", ViewBag.SelectedClientOther   ), "-- All --", new { style = "width:325px;height:25px" })</td>
+                    <td><input type="submit" value="Filter" /></td>
+
+                </tr>
+
+            </table>
+        </p>
+
+
+    }
+</div>
+
+<div id="main-wrapper">
+    <div id="main-wrapper">
+        <div class="row">
+            <div class="row">
+                <div>
+                    <div class="panel panel-white">
+                        <div class="panel-body">
+                            <div class="box-body table-responsive">
+
+                                <table id="timeSheetHeader" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr style="background-color :#34425A;color:white;text-align:center;">
+                                            <th>TimeSheet Number</th>
+                                            <th style="text-align:center;">Order Start Date</th>
+                                            <th style="text-align:center;">Order Finish Date</th>
+                                            <th>Contractor</th>
+                                            <th>Organization Level</th>
+                                            <th>Title/Grade</th>
+                                            <th>Total Hours</th>
+                                            <th>Approval Status</th>
+                                            <th>Update Status</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+
+                                            <tr>
+                                                <td nowrap>
+                                                    @*<a href="@Url.Action("view","viewtimesheetdetails")">ET @item.Timesheet_Number </a>*@
+                                                    @*<a href="@Url.Action("ViewETdetails", "Timesheet", new { id = item.Timesheet_Number }, null)">ET @item.Timesheet_Number</a>*@
+
+@if (item.Approval_Status == "N")
+{
+    <a href="#" class="btn btn-link" onclick="javascript:ShowTimeSheetDetails(@item.Timesheet_Number,'/Timesheet/ViewETdetailspartial/')">ET @item.Timesheet_Number</a>
+}
+else
+{
+    <a href="#" class="btn btn-link" onclick="javascript:ShowTimeSheetDetails(@item.Timesheet_Number,'/Timesheet/ViewETdetails/')">ET @item.Timesheet_Number</a>
+}                                               
+                                                </td>
+                                                @*<td>@String.Format("{0:MMM dd, yyyy}", item.modified_on)</td>*@
+                                                <td nowrap style="text-align:center;font-size:small;color:grey;">@String.Format("{0:d}", item.Order_Start_Date)</td>
+                                                <td nowrap style="text-align:center;font-size:small;color:grey;">@String.Format("{0:d}", item.Order_Finish_Date)</td>
+
+
+                                                <td nowrap>@item.Contractor_FullName</td>
+                                                <td width="250">@item.Organization_Level</td>
+                                                <td nowrap>@item.Contractor_Title</td>
+                                                <td nowrap>@item.No_of_Hours</td>
+
+                                                @*<input type="hidden" name="NoHours" id="NoHours" value="@item.No_of_Hours" />*@
+                                                @if (item.Approval_Status == "A")
+                                                  {
+                                                    <td nowrap style="font-weight:bold;color:darkgreen;">@item.Approval_Status_Description</td>
+                                                  }
+                                                else if (item.Approval_Status == "Y")
+                                                {
+                                                    <td nowrap style="font-weight:bold;color:darkgreen;">@item.Approval_Status_Description</td>
+                                                }
+                                                else if (item.Approval_Status == "P")
+                                                {
+                                                    <td nowrap style="font-weight:bold;color:darkblue;">@item.Approval_Status_Description</td>
+                                                }
+                                                else if (item.Approval_Status == "E")
+                                                {
+                                                    <td nowrap style="font-weight:bold;color:darkcyan;">@item.Approval_Status_Description</td>
+                                                }
+                                                else if (item.Approval_Status == "S")
+                                                {
+                                                    <td nowrap style="font-weight:bold;color:darkviolet;">@item.Approval_Status_Description</td>
+                                                }
+                                                else
+                                                {
+                                                    <td nowrap style="font-weight:bold;color:darkred;">@item.Approval_Status_Description</td>
+                                                  }
+                                                 
+
+                                                 
+                                                    
+                                            
+
+                                                <td nowrap>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                            <li>@Html.ActionLink("Approved", "UpdateTimesheet", new { id = item.Timesheet_Number, status = "A" }, null)</li>
+                                                            <li>@Html.ActionLink("Processed", "UpdateTimeSheet", new { id = item.Timesheet_Number, status = "P" })</li>
+                                                            <li>@Html.ActionLink("Not Approved", "UpdateTimeSheet", new { id = item.Timesheet_Number, status = "N" })</li>
+                                                            <li>@Html.ActionLink("Sent to Payroll/Billing", "UpdateTimeSheet", new { id = item.Timesheet_Number, status = "E" })</li>
+                                                            <li>@Html.ActionLink("Selected for Payroll/Billing", "UpdateTimeSheet", new { id = item.Timesheet_Number, status = "S" })</li>
+
+
+                                                        </ul>
+                                                    </div>
+
+
+
+
+                                                </td>
+
+
+
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align:center;"><a href="Report_Timesheet">Preview Report</a></div>
+
+
+    <!--GRADIENT--><div class="gradient"></div><!--END GRADIENT-->
+
+@section scripts {
+ 
+         @Scripts.Render("~/bundles/dataTables")
+
+        <script type="text/javascript">
+            $(function () {
+                var empTable = $("#timeSheetHeader").dataTable({
+                    "bPaginate": true,
+                    "bAutoWidth": false,
+                    "aDataSort": true,
+                    "bFilter": true
+                });
+            });
+
+        </script>
+    <script type="text/javascript">
+
+    
+        function ShowTimeSheetDetails(id,pageView) {
+            BootstrapDialog.show({
+                title: 'Time Sheet Daily Time Record',
+                // message: $('<div></div>').load('/Timesheet/ViewETdetails/' + id),
+                message: $('<div></div>').load(pageView + id),
+                cssClass: 'login-dialog',
+                type: BootstrapDialog.TYPE_SUCCESS,
+                draggable: true,
+                //buttons: [{
+                //    icon: 'glyphicon glyphicon-send',
+                //    label: 'Update This Timesheet',
+                //    cssClass: 'btn-primary',
+                //    autospin: true,
+                //    action: function (dialogRef) {
+                //        dialogRef.enableButtons(false);
+                //        dialogRef.setClosable(false);
+                //  //      dialogRef.getModalBody().html('Dialog closes in 5 seconds.');
+                //        setTimeout(function () {
+                //            dialogRef.close();
+                //        }, 5000);
+                //    }
+                //}, {
+                //    icon: 'glyphicon glyphicon-close',
+                //    label: 'Close',
+                //    cssClass: 'btn-primary',
+                //    action: function (dialogRef) {
+                //        dialogRef.close();
+                //    }
+                //}]
+            });
+        }
+
+
+    </script>
+
+
+
+
+    }

@@ -1,0 +1,156 @@
+﻿@model DOL.MVC.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Drake Online Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="http://msurguy.github.io/ladda-bootstrap/dist/ladda-themeless.min.css">
+    <script src="http://msurguy.github.io/ladda-bootstrap/dist/spin.min.js"></script>
+    <script src="http://msurguy.github.io/ladda-bootstrap/dist/ladda.min.js"></script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Drake Online </title>
+
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta charset="UTF-8">
+    <meta name="description" content="Drake International" />
+    <meta name="keywords" content="Timesheet,DHL" />
+    <meta name="author" content="Jef" />
+    <link href="~/Content/login.css" rel="stylesheet" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+
+    @Styles.Render("~/Content/plugins")
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".username").focus(function () {
+                $(".user-icon").css("left", "-48px");
+            });
+            $(".username").blur(function () {
+                $(".user-icon").css("left", "0px");
+            });
+
+            $(".password").focus(function () {
+                $(".pass-icon").css("left", "-48px");
+            });
+            $(".password").blur(function () {
+                $(".pass-icon").css("left", "0px");
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <div id="wrapper">
+        <!--SLIDE-IN ICONS-->
+        <div class="user-icon"></div>
+        <div class="pass-icon"></div>
+        <!--END SLIDE-IN ICONS-->
+        @using (Html.BeginForm("Loginv2", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "login-form", role = "form", @name = "login-form" }))
+        {
+            @Html.AntiForgeryToken()
+
+
+            <!--HEADER-->
+            <div class="header">
+                <img src="~/images/DrakeloginLogo.png" alt="Drake International" title="Drake Online" /> &nbsp;&nbsp;<img src="~/images/canada.png" alt="Drake International" title="Drake Online" />
+                <div>
+                    <hr />
+                </div>
+                <div>
+                    <!--DESCRIPTION--><span>Please login below</span><!--END DESCRIPTION-->
+                </div>
+
+
+            </div>
+
+            <div class="content">
+                @Html.ValidationSummary(true)
+                <input name="UserName" type="text" class="input username" value="Drake Online ID" onfocus="this.value=''" />
+                <input name="Password" type="password" class="input password" value="Password" onfocus="this.value=''" />
+            </div>
+
+            <div style="text-align:center;">
+
+                <button class="btn btn-primary btn-lg ladda-button" data-style="expand-left"><span class="ladda-label">Login</span></button>
+
+                <script>
+                    Ladda.bind('.ladda-button');
+                    Ladda.bind('.ladda-progress');
+                </script>
+
+            </div>
+            <br />
+
+            <!--FOOTER-->
+            <div class="footer">
+                @*<!--LOGIN BUTTON--><input type="submit" name="submit" value="Login" class="button" /><!--END LOGIN BUTTON-->*@
+
+
+
+                <div style="padding: 10px 0 0 0; font-size: 11px;">If you have problems on the account <a href="mailto:jjuarez@drakeintl.co.uk">click here.</a> to email Admin.</div>
+
+            </div>
+            <!--END FOOTER-->
+        }
+
+        <div class="copyright">
+            Copyright &copy; @DateTime.Now.Year Drake International. All rights reserved.
+
+        </div>
+    </div>
+
+
+    <!--GRADIENT--><div class="gradient"></div><!--END GRADIENT-->
+    @Scripts.Render("~/bundles/scripts")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script type="text/javascript">
+        var dlgContact;
+
+        $(document).ready(function () {
+            $(".username").focus(function () {
+                $(".user-icon").css("left", "-46px");
+            });
+            $(".username").blur(function () {
+                $(".user-icon").css("left", "0px");
+            });
+
+            $(".password").focus(function () {
+                $(".pass-icon").css("left", "-46px");
+            });
+            $(".password").blur(function () {
+                $(".pass-icon").css("left", "0px");
+            });
+        });
+
+        function showForm() {
+            dlgContact = BootstrapDialog.show({
+                title: "Contact IT Support",
+                type: BootstrapDialog.TYPE_SUCCESS,
+                message: $('<div></div>').load('/Maintenance/ContactIT/')
+            });
+
+
+            return false;
+
+        }
+
+        function formSuccess() {
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<DOL.MVC.Models.DocumentViewModel>
+
+<table id="docList" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Filename)</th>
+            <th>Sort Center</th>
+            <th>Receive Date From</th>
+            <th>Prepared By</th>
+            <th>Date Uploaded</th>
+            <th>Uploaded By</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+          
+             
+                <tr>
+                    <td style="width:500px"><img src="/images/excel_icon.gif" />  @item.Filename</td>                
+                    <td>@item.SortCenter</td>
+                    <td>@String.Format("{0:MMM dd, yyyy}", item.ReceivedDateFrom)</td>
+                    <td>@item.PreparedBy</td>
+                    <td>@String.Format("{0:MMM dd, yyyy}", item.DateUploaded)</td>
+                    <td>@item.UserUploaded</td>
+                    <td>@Html.ActionLink("Download/View", "View", new { id = item.Id }, new { target = "_blank" })</td>
+                    <td>
+                       @Html.ActionLink("Delete", "Delete", "Document",
+                               new { id = item.Id }, //   Route args if needed; null if not.
+                        new {@style="color:Red;" }
+                        )
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

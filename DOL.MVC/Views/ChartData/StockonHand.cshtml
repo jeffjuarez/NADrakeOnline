@@ -1,0 +1,95 @@
+﻿
+
+
+
+@model DOL.MVC.Models.ChartsModel
+@{
+    ViewBag.Title = "STOCK ON HAND";
+    //Layout = "~/Views/Shared/_HowTosLayout.cshtml";
+}
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+
+<div class="page-title">
+    <h3>Stock on Hand Report</h3>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb">
+     @ViewBag.ReportParam
+        </ol>
+    </div>
+</div>
+
+
+<div class="col-md-6">
+    @using (Html.BeginForm("Search_StockonHand", "ChartData", FormMethod.Post))
+    {
+        <p>
+            <table cellpadding="2" cellspacing="5">
+                <tr>
+                    <td> Sort Center:</td>
+                    <td>
+                        <select name="SortCenter" id="SortCenter">
+                            <option value="DrakeWestEnd">Drake West End</option>
+                            <option value="DrakeGillman">Drake Gillman</option>
+                            <option value="DrakeLaverton">Drake Laverton</option>
+                            <option value="DrakeStMarys">Drake St. Marys</option>
+                        </select>
+                    </td>
+                 
+
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Received Date :</td>
+                    <td> @Html.TextBox("RecDateFrom", "", new { style = "width:125px;height:25px", @class = "datepicker" })</td>
+                    <td>To :</td>
+                    <td> @Html.TextBox("RecDateTo", "", new { style = "width:125px;height:25px", @class = "datepicker" })</td>
+                    <td><input type="submit" value="Search" /></td>
+                </tr>
+            </table>
+        </p>
+        
+        <table border="2" >
+
+            <tr>
+                <td>
+                    @(Model.Chart_SOH_Pallete)
+                </td>
+                <td >
+                    @(Model.Chart_SOH_Composite)
+                </td>
+
+            </tr>
+
+            <tr>
+                <td>
+                    @(Model.Chart_SOH_HollowProfile)
+                </td>
+                <td >
+                    @(Model.Chart_SOH_TopFrames)
+                </td>
+
+            </tr>
+        </table>
+        <br />
+    <br />
+    <br />
+
+@*<div>
+    <div>
+        Palette here
+        @(Model.Chart_SOH_Pallete)
+    </div>
+    <div>
+        Composite Here
+        @(Model.Chart_SOH_Composite)
+    </div>
+</div>*@
+
+    }
+</div>
+

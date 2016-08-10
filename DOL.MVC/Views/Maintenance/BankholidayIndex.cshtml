@@ -1,0 +1,72 @@
+﻿@model IEnumerable<DOL.MVC.Models.BankholidaysViewModels>
+
+
+<div id="main-wrapper">
+    
+    <div class="row">
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+
+                    <a href="/Maintenance/BankHolidayAdd" class="waves-effect waves-button"><span class="menu-icon fa fa-plus-circle"></span><p>Add New Bank Holiday</p></a></li>
+
+                </div>
+                <div class="panel panel-white">
+
+                    <div class="panel-body">
+                        <table id="docList" class="table table-bordered table-striped">
+                            <thead >
+                                <tr style="background-color :#34425A;color:white;text-align:center;">
+                                    <th>Holiday Name</th>
+                                    <th style="text-align:center;">Date</th>
+                                    <th style="text-align:center;">Day</th>
+                                    <th>Created By</th>
+                                    <th>Date Created</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                         <tr>
+                                            <td>@item.description</td>
+                                                @*<td>@String.Format("{0:MMM dd, yyyy}", item.modified_on)</td>*@
+                                            @if (item.holiday_date < DateTime.Now)
+                                            {
+                                                <td style="text-align:center;font-size:medium;color:grey;">@String.Format("{0:MMM dd, yyyy}", item.holiday_date)</td>
+                                                <td style="text-align:center;font-size:medium;color:grey;">@String.Format("{0: dddd }", item.holiday_date)</td>
+
+                                                <td style="color:cadetblue;font-weight:700">Done </td>
+                                            }
+                                            else
+                                            {
+                                                <td style="text-align:center; font-size:medium;font-weight:700;color:maroon;">@String.Format("{0:MMM dd, yyyy}", item.holiday_date)</td>
+                                                <td style="text-align:center; font-size:medium;font-weight:700">@String.Format("{0: dddd }", item.holiday_date)</td>
+
+                                                <td style="color:darkgreen;font-weight:700">Awaiting </td>
+                                            }
+
+                                             <td>@item.createdby</td>
+                                             <td>@String.Format("{0:MMM dd, yyyy}", item.date_created)</td>
+
+                                               
+
+
+                                            <td>
+                                                @Html.ActionLink("Delete", "DeleteBank", "Maintenance",
+                                                       new { id = item.Id }, //   Route args if needed; null if not.
+                                                new { @style = "color:Red;" }
+                                                )
+                                            </td>
+                                        </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

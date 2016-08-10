@@ -1,0 +1,92 @@
+﻿
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/css/bootstrap-dialog.min.css" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.5/js/bootstrap-dialog.min.js"></script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+       var SortCenter_FromController = set(@Html.Raw(Json.Encode(ViewBag.SortCenter)));
+        var DateFrom_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateFrom)));
+        var DateTo_Controller = set(@Html.Raw(Json.Encode(ViewBag.DateTo)));
+
+        var _dateFrom = new Date(DateFrom_Controller);
+        var _dateTo = new Date(DateTo_Controller);
+
+
+     //   alert('SortCenter: ' + SortCenter_FromController +  + ' _dateFrom : ' + _dateFrom + '\r' + '_dateTo : ' + _dateTo);
+
+        if (DateFrom_Controller == '') // No Date : Initial Value when clicking the page
+        {
+            $("#InvoiceStartDate").datepicker({ dateFormat: 'mm/dd/yy' }).datepicker("setDate", "0");
+        //    $("#orderFinishDate").datepicker({ dateFormat: 'dd/mm/yy', }).datepicker("setDate", new Date().getDay + 7);
+        }
+        else
+        {
+            $('#SortCenter').val(SortCenter_FromController).attr("selected", "selected");
+            $("#InvoiceStartDate").datepicker({ dateFormat: 'mm/dd/yy' }).datepicker("setDate", DateFrom_Controller);
+
+
+       }
+
+
+
+
+    });
+
+    function set(value) {
+        return value;
+    }
+
+
+</script>
+
+<div class="page-title">
+    <h3>Spend Report</h3>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="active">Spend Report by Client  @ViewBag.Periods</li>
+        </ol>
+    </div>
+</div>
+
+<div>
+    @using (Html.BeginForm("Display_Report", "Reporting", FormMethod.Post))
+    {
+        <p>
+
+            <table>
+                <tr>
+                    <td style="white-space:nowrap;">Client Organization :</td>
+                   <td>@Html.DropDownList("ClientSelected", new SelectList((System.Collections.IEnumerable)ViewData["tempClientList"], "group_id", "client_org_name", ViewBag.SelectedClient), "-- All --", new { style = "width:325px;height:25px" })</td>
+
+                    <td style="white-space:nowrap;">&nbsp;&nbsp;Invoice Start Date :</td>
+                    <td>
+                        @Html.TextBox("InvoiceStartDate", "", new { style = "width:125px;height:25px", @class = "datepicker" })
+
+                    </td>
+                    <td>&nbsp;<input type="submit" value="View Report" /></td>
+                </tr>
+
+
+            </table>
+            <br />
+            <div>
+                @*<iframe src="~/Reports/ReportViewer.aspx" width="720" height="800"></iframe>*@
+
+                <iframe src="@ViewBag.ReportSource" width="720" height="800"></iframe>
+
+            </div>
+        </p>
+
+
+    }
+</div>
+
+
